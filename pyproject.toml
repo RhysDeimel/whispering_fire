@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "whispering_fire"
+requires-python = ">=3.11"
+dynamic = ["version"]
+dependencies = []
+authors = [
+    {name = "Rhys Deimel", email = "deimelr@hotmail.com"},
+]
+maintainers = [
+    {name = "Rhys Deimel", email = "deimelr@hotmail.com"},
+]
+description = "Playing around with FastAPI"
+readme =  "README.md"
+license = {text = "MIT License"}
+
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.report]
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+]
+fail_under = 95
+ignore_errors = true
+skip_covered = true
+skip_empty = true
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "tests/conftest.py"
+]
+
+
+[tool.mypy]
+exclude = [
+    'venv/*'
+]
+
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "incremental",
+]
+
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+quote-style = "single"
+docstring-code-format = true
+
+
+[tool.setuptools.dynamic]
+version = {attr = "whispering_fire.__version__"}

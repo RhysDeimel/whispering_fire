@@ -4,4 +4,7 @@
 # If you're pulling in other modules within this folder, don't forget to import
 # them as demonstrated in the unused example below
 
-# from . import foo
+import uvicorn
+from . import main
+
+uvicorn.run("whispering_fire.main:app", host="0.0.0.0")

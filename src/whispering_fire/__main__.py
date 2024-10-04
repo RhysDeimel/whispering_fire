@@ -5,6 +5,5 @@
 # them as demonstrated in the unused example below
 
 import uvicorn
-from . import main
 
-uvicorn.run("whispering_fire.main:app", host="0.0.0.0")
+uvicorn.run('whispering_fire.main:app', host='0.0.0.0', port=8080)

@@ -2,11 +2,24 @@
 Playing around with FastAPI
 
 ```
+pip install -e .[dev]
+```
+
+
+```
 fastapi dev src/whispering_fire/main.py
 
 # if package installed. Hooks into __main__
 python -m whispering_fire
 ```
+
+```
+ruff format
+ruff check
+ruff check --fix
+mypy .
+```
+
 
 ```
 http://localhost:8000/

@@ -8,6 +8,14 @@ def read_root():
     return {'Hello': 'World'}
 
 
-@app.get('/items/{item_id}')
-def read_item(item_id: int, q: str | None = None):
-    return {'item_id': item_id, 'q': q}
+@app.get('/two_pow/{num}')
+def calc_square(num: int):
+    val = 0
+    for i in range(num):
+        val = add_nums(val, num)
+
+    return {'result': val}
+
+
+def add_nums(a, b):
+    return a + b

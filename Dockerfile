@@ -1,8 +1,15 @@
-ARG PY_VERSION="3.12"
+# syntax=docker/dockerfile:1
+
+ARG PY_VERSION="3.11"
+ARG DEBIAN_RELEASE_NAME="bookworm"
+
+ARG CREATED
+ARG GIT_HASH
+ARG PACKAGE_VERSION
 
 
 
-FROM python:${PY_VERSION}-slim AS dev
+FROM python:${PY_VERSION}-slim-${DEBIAN_RELEASE_NAME} AS dev
 WORKDIR /app
 
 COPY . .
@@ -13,7 +20,7 @@ CMD ["python", "-m", "whispering_fire"]
 
 
 
-FROM python:${PY_VERSION} AS build
+FROM python:${PY_VERSION}-${DEBIAN_RELEASE_NAME} AS build
 ARG PY_VERSION
 WORKDIR /app
 
@@ -42,3 +49,21 @@ ENTRYPOINT ["/app"]
 #
 # staticX extracts packed files into a temporary directory in /tmp
 #  `scratch` does not have mkdir, so we need to create it, and then copy over
+
+# OCI recommended annotations: https://github.com/opencontainers/image-spec/blob/main/annotations.md
+LABEL org.opencontainers.image.authors="Rhys Deimel"
+LABEL org.opencontainers.image.created="${CREATED}"
+LABEL org.opencontainers.image.description="Playing around with FastAPI"
+LABEL org.opencontainers.image.documentation="https://raw.githubusercontent.com/RhysDeimel/whispering_fire/refs/heads/master/README.md"
+LABEL org.opencontainers.image.licenses=""
+LABEL org.opencontainers.image.ref.name="whispering_fire-${PACKAGE_VERSION}"
+LABEL org.opencontainers.image.revision="${GIT_HASH}"
+LABEL org.opencontainers.image.source="https://github.com/RhysDeimel/whispering_fire"
+LABEL org.opencontainers.image.title="Whispering_fire"
+LABEL org.opencontainers.image.url="https://github.com/RhysDeimel/whispering_fire"
+LABEL org.opencontainers.image.vendor=""
+LABEL org.opencontainers.image.version="${PACKAGE_VERSION}"
+
+# Additional useful annotations
+LABEL python_version="${PY_VERSION}"
+LABEL build_base="${DEBIAN_RELEASE_NAME}"

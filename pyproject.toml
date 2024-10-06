@@ -1,8 +1,12 @@
 [build-system]
 requires = [
     "setuptools >= 61.0",
+    # "wheel",
+    # "nuitka",
+    # "toml"
 ]
 build-backend = "setuptools.build_meta"
+# build-backend = "nuitka.distutils.Build"
 
 
 [project]
@@ -72,7 +76,8 @@ omit = [
 
 [tool.mypy]
 exclude = [
-    'venv/*'
+    'venv/*',
+    'build/*'
 ]
 
 

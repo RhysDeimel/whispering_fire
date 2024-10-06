@@ -6,4 +6,6 @@
 
 import uvicorn
 
-uvicorn.run('whispering_fire.main:app', host='0.0.0.0', port=8080)
+from whispering_fire import main
+
+uvicorn.run(main.app, host='0.0.0.0', port=8080)

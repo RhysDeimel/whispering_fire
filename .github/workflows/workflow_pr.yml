@@ -23,23 +23,23 @@ jobs:
 
           echo "branch_sha=$branch_sha"
           echo "branch_sha=$branch_sha" >> $GITHUB_OUTPUT
-          echo "*branch_sha*: $branch_sha" >> $GITHUB_STEP_SUMMARY
+          echo "**branch_sha**: $branch_sha" >> $GITHUB_STEP_SUMMARY
 
       - name: Set version
         id: version
         run: |
-          version=$(cat ${{ env.workload-path }}/__version__.py | cut -d '"' -f 2)
+          version=$(cat ${{ env.WORKLOAD_PATH }}/__version__.py | cut -d '"' -f 2)
           
           echo "version=$version"
           echo "version=$version" >> $GITHUB_OUTPUT
-          echo "*version*: $version" >> $GITHUB_STEP_SUMMARY
+          echo "**version**: $version" >> $GITHUB_STEP_SUMMARY
 
       - name: Set dev_tag
         id: dev
         run: |
           echo "dev_tag=${{ steps.version.outputs.version }}-${{ steps.branch_sha.outputs.branch_sha }}"
           echo "dev_tag=${{ steps.version.outputs.version }}-${{ steps.branch_sha.outputs.branch_sha }}" >> $GITHUB_OUTPUT
-          echo "*dev_tag*: $dev_tag" >> $GITHUB_STEP_SUMMARY
+          echo "**dev_tag**: $dev_tag" >> $GITHUB_STEP_SUMMARY
 
 
 #  test_application_code:

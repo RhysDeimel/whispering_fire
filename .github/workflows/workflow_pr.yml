@@ -3,9 +3,12 @@ on:
     branches: [master]
     types: [opened, synchronize, reopened, ready_for_review]
 
+env:
+  WORKLOAD_PATH: "src/whispering_fire"
+
 jobs:
   pipeline_data:
-    runs_on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#multiline-strings
       - name: Get changes
@@ -25,7 +28,7 @@ jobs:
       - name: Set version
         id: version
         run: |
-          version=$(cat ${{ inputs.workload-path }}/__version__.py | cut -d '"' -f 2)
+          version=$(cat ${{ env.workload-path }}/__version__.py | cut -d '"' -f 2)
           
           echo "version=$version"
           echo "version=$version" >> $GITHUB_OUTPUT
@@ -40,24 +43,27 @@ jobs:
 
 
 #  test_application_code:
-#    runs_on: ubuntu-latest
+#    runs-on: ubuntu-latest
 #
 #  test_docs:
-#    runs_on: ubuntu-latest
+#    runs-on: ubuntu-latest
 #
 #  test_iac:
-#    runs_on: ubuntu-latest
+#    runs-on: ubuntu-latest
 
 
 
 # skip builds on draft PRs
-#  build_application_code:
-#    runs_on: ubuntu-latest
-#    if: github.event.pull_request.draft == false
-#
-#  build_docs:
-#    runs_on: ubuntu-latest
-#    if: github.event.pull_request.draft == false
-#
-#
-#
+  build_application_code:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - run: |
+          echo hello
+
+  build_docs:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - run: |
+          echo hello

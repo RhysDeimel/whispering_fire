@@ -34,9 +34,9 @@ jobs:
         run: |
           workload_version=$(cat ${{ env.WORKLOAD_PATH }}/__version__.py | cut -d "'" -f 2)
           
-          echo "workload_version=$workload_version"
-          echo "workload_version=$workload_version" >> $GITHUB_OUTPUT
-          echo "**workload_version**: $workload_version" >> $GITHUB_STEP_SUMMARY
+          echo "workload_version=\`$workload_version\`"
+          echo "workload_version=\`$workload_version\`" >> $GITHUB_OUTPUT
+          echo "**workload_version**: \`$workload_version\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Set image_tag
         id: image_tag
@@ -64,9 +64,9 @@ jobs:
             // 2. Prepare format of the comment
               const output = `#### Pipeline Data 📋️️
   
-              Branch sha:\`${{ steps.branch_sha.outputs.branch_sha }}\`
-              Workload version:\`${{ steps.workload_version.outputs.workload_version }}\`
-              Image tag:\`${{ steps.image_tag.outputs.image_tag }}\``
+              Branch sha: \`${{ steps.branch_sha.outputs.branch_sha }}\`
+              Workload version: \`${{ steps.workload_version.outputs.workload_version }}\`
+              Image tag: \`${{ steps.image_tag.outputs.image_tag }}\``
             ;
             
             // 3. If we have a comment, update it, otherwise create a new one
@@ -112,3 +112,15 @@ jobs:
     steps:
       - run: |
           echo hello
+
+
+  # this exists to stop the edge case where converting from a "draft" PR
+  #   to "Ready to review" gives you a small window to merge before the checks
+  #   kick in and prevent you. Mostly to stop accidental double-clicks instead of
+  #   malicious behaviour.
+  draft_check:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == true
+    steps:
+      - run: |
+          echo "This PR is still a draft. Please upgrade it"  

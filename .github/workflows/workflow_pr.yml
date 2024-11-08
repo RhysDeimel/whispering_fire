@@ -8,6 +8,8 @@ env:
 
 jobs:
   pipeline_data:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,22 +29,63 @@ jobs:
           echo "branch_sha=$branch_sha" >> $GITHUB_OUTPUT
           echo "**branch_sha**: $branch_sha" >> $GITHUB_STEP_SUMMARY
 
-      - name: Set version
-        id: version
+      - name: Set workload_version
+        id: workload_version
         run: |
-          version=$(cat ${{ env.WORKLOAD_PATH }}/__version__.py | cut -d "'" -f 2)
+          workload_version=$(cat ${{ env.WORKLOAD_PATH }}/__version__.py | cut -d "'" -f 2)
           
-          echo "version=$version"
-          echo "version=$version" >> $GITHUB_OUTPUT
-          echo "**version**: $version" >> $GITHUB_STEP_SUMMARY
+          echo "workload_version=$workload_version"
+          echo "workload_version=$workload_version" >> $GITHUB_OUTPUT
+          echo "**workload_version**: $workload_version" >> $GITHUB_STEP_SUMMARY
 
-      - name: Set dev_tag
-        id: dev
+      - name: Set image_tag
+        id: image_tag
         run: |
-          echo "dev_tag=${{ steps.version.outputs.version }}-${{ steps.branch_sha.outputs.branch_sha }}"
-          echo "dev_tag=${{ steps.version.outputs.version }}-${{ steps.branch_sha.outputs.branch_sha }}" >> $GITHUB_OUTPUT
-          echo "**dev_tag**: $dev_tag" >> $GITHUB_STEP_SUMMARY
+          image_tag=${{ steps.workload_version.outputs.workload_version }}-${{ steps.branch_sha.outputs.branch_sha }}
 
+          echo "image_tag=$image_tag"
+          echo "image_tag=$image_tag" >> $GITHUB_OUTPUT
+          echo "**image_tag**: $dev_tag" >> $GITHUB_STEP_SUMMARY
+
+      - name: Add details to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // 1. Retrieve existing bot comments for the PR
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+              })
+              const botComment = comments.find(comment => {
+                return comment.user.type === 'Bot' && comment.body.includes('Pipeline Data 📋️️')
+              })
+            
+            // 2. Prepare format of the comment
+              const output = `#### Pipeline Data 📋️️
+  
+              Branch sha:\`${{ steps.branch_sha.outputs.branch_sha }}\`
+              Workload version:\`${{ steps.workload_version.outputs.workload_version }}\`
+              Image tag:\`${{ steps.image_tag.outputs.image_tag }}\`
+            ;
+            
+            // 3. If we have a comment, update it, otherwise create a new one
+              if (botComment) {
+                github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: output
+                })
+              } else {
+                github.rest.issues.createComment({
+                  issue_number: context.issue.number,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  body: output
+                })
+              }
+          
 
 #  test_application_code:
 #    runs-on: ubuntu-latest

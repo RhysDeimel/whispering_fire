@@ -8,8 +8,6 @@ env:
 
 jobs:
   pipeline_data:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,7 +43,7 @@ jobs:
 
           echo "image_tag=$image_tag"
           echo "image_tag=$image_tag" >> $GITHUB_OUTPUT
-          echo "**image_tag**: $dev_tag" >> $GITHUB_STEP_SUMMARY
+          echo "**image_tag**: $image_tag" >> $GITHUB_STEP_SUMMARY
 
       - name: Add details to PR
         uses: actions/github-script@v7

@@ -8,15 +8,15 @@ env:
 
 jobs:
   pipeline_data:
-    permissions:
-      contents: read
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write # This is required for updating PRs with the comment
     steps:
       - uses: actions/checkout@v4
 
       # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#multiline-strings
       - name: Get changes
-        run: echo "Hello"
+        run: .github/workflows/checker.sh
 
       - name: Set branch_sha
         id: branch_sha
@@ -27,7 +27,7 @@ jobs:
 
           echo "branch_sha=$branch_sha"
           echo "branch_sha=$branch_sha" >> $GITHUB_OUTPUT
-          echo "**branch_sha**: $branch_sha" >> $GITHUB_STEP_SUMMARY
+          echo "**branch_sha**: \`$branch_sha\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Set workload_version
         id: workload_version
@@ -36,7 +36,7 @@ jobs:
           
           echo "workload_version=$workload_version"
           echo "workload_version=$workload_version" >> $GITHUB_OUTPUT
-          echo "**workload_version**: $workload_version" >> $GITHUB_STEP_SUMMARY
+          echo "**workload_version**: \`$workload_version\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Set image_tag
         id: image_tag
@@ -45,7 +45,7 @@ jobs:
 
           echo "image_tag=$image_tag"
           echo "image_tag=$image_tag" >> $GITHUB_OUTPUT
-          echo "**image_tag**: $dev_tag" >> $GITHUB_STEP_SUMMARY
+          echo "**image_tag**: \`$image_tag\`" >> $GITHUB_STEP_SUMMARY
 
       - name: Add details to PR
         uses: actions/github-script@v7
@@ -64,9 +64,9 @@ jobs:
             // 2. Prepare format of the comment
               const output = `#### Pipeline Data 📋️️
   
-              Branch sha:\`${{ steps.branch_sha.outputs.branch_sha }}\`
-              Workload version:\`${{ steps.workload_version.outputs.workload_version }}\`
-              Image tag:\`${{ steps.image_tag.outputs.image_tag }}\`
+              Branch sha: \`${{ steps.branch_sha.outputs.branch_sha }}\`
+              Workload version: \`${{ steps.workload_version.outputs.workload_version }}\`
+              Image tag: \`${{ steps.image_tag.outputs.image_tag }}\``
             ;
             
             // 3. If we have a comment, update it, otherwise create a new one
@@ -98,17 +98,30 @@ jobs:
 
 
 
-# skip builds on draft PRs
-  build_application_code:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
-    steps:
-      - run: |
-          echo hello
-
-  build_docs:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
-    steps:
-      - run: |
-          echo hello
+## skip builds on draft PRs
+#  build_application_code:
+#    runs-on: ubuntu-latest
+#    if: github.event.pull_request.draft == false
+#    steps:
+#      - run: |
+#          echo hello
+#
+#  build_docs:
+#    runs-on: ubuntu-latest
+#    if: github.event.pull_request.draft == false
+#    steps:
+#      - run: |
+#          echo hello
+#
+#
+#  # this exists to stop the edge case where converting from a "draft" PR
+#  #   to "Ready to review" gives you a small window to merge before the checks
+#  #   kick in and prevent you. Mostly to stop accidental clicks instead of
+#  #   malicious behaviour.
+#  draft_check:
+#    runs-on: ubuntu-latest
+#    if: github.event.pull_request.draft == true
+#    steps:
+#      - run: |
+#          echo "This PR is still a draft. Please upgrade it"
+#          exit 1

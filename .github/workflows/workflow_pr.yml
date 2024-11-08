@@ -1,0 +1,63 @@
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  pipeline_data:
+    runs_on: ubuntu-latest
+    steps:
+      # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#multiline-strings
+      - name: Get changes
+        run: echo "Hello"
+
+      - name: Set branch_sha
+        id: branch_sha
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          branch_sha=$(echo -n "$BRANCH_NAME" | sha256sum | head -c 7)
+
+          echo "branch_sha=$branch_sha"
+          echo "branch_sha=$branch_sha" >> $GITHUB_OUTPUT
+          echo "*branch_sha*: $branch_sha" >> $GITHUB_STEP_SUMMARY
+
+      - name: Set version
+        id: version
+        run: |
+          version=$(cat ${{ inputs.workload-path }}/__version__.py | cut -d '"' -f 2)
+          
+          echo "version=$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "*version*: $version" >> $GITHUB_STEP_SUMMARY
+
+      - name: Set dev_tag
+        id: dev
+        run: |
+          echo "dev_tag=${{ steps.version.outputs.version }}-${{ steps.branch_sha.outputs.branch_sha }}"
+          echo "dev_tag=${{ steps.version.outputs.version }}-${{ steps.branch_sha.outputs.branch_sha }}" >> $GITHUB_OUTPUT
+          echo "*dev_tag*: $dev_tag" >> $GITHUB_STEP_SUMMARY
+
+
+#  test_application_code:
+#    runs_on: ubuntu-latest
+#
+#  test_docs:
+#    runs_on: ubuntu-latest
+#
+#  test_iac:
+#    runs_on: ubuntu-latest
+
+
+
+# skip builds on draft PRs
+#  build_application_code:
+#    runs_on: ubuntu-latest
+#    if: github.event.pull_request.draft == false
+#
+#  build_docs:
+#    runs_on: ubuntu-latest
+#    if: github.event.pull_request.draft == false
+#
+#
+#

@@ -16,7 +16,7 @@ jobs:
 
       # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#multiline-strings
       - name: Get changes
-        run: echo "Hello"
+        run: .github/workflows/checker.sh
 
       - name: Set branch_sha
         id: branch_sha
@@ -98,30 +98,30 @@ jobs:
 
 
 
-# skip builds on draft PRs
-  build_application_code:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
-    steps:
-      - run: |
-          echo hello
-
-  build_docs:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
-    steps:
-      - run: |
-          echo hello
-
-
-  # this exists to stop the edge case where converting from a "draft" PR
-  #   to "Ready to review" gives you a small window to merge before the checks
-  #   kick in and prevent you. Mostly to stop accidental clicks instead of
-  #   malicious behaviour.
-  draft_check:
-    runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == true
-    steps:
-      - run: |
-          echo "This PR is still a draft. Please upgrade it"
-          exit 1
+## skip builds on draft PRs
+#  build_application_code:
+#    runs-on: ubuntu-latest
+#    if: github.event.pull_request.draft == false
+#    steps:
+#      - run: |
+#          echo hello
+#
+#  build_docs:
+#    runs-on: ubuntu-latest
+#    if: github.event.pull_request.draft == false
+#    steps:
+#      - run: |
+#          echo hello
+#
+#
+#  # this exists to stop the edge case where converting from a "draft" PR
+#  #   to "Ready to review" gives you a small window to merge before the checks
+#  #   kick in and prevent you. Mostly to stop accidental clicks instead of
+#  #   malicious behaviour.
+#  draft_check:
+#    runs-on: ubuntu-latest
+#    if: github.event.pull_request.draft == true
+#    steps:
+#      - run: |
+#          echo "This PR is still a draft. Please upgrade it"
+#          exit 1

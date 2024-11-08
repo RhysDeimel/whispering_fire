@@ -57,11 +57,13 @@ jobs:
   build_application_code:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
-    run: |
-      echo hello
+    steps:
+      - run: |
+          echo hello
 
   build_docs:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
-    run: |
-      echo hello
+    steps:
+      - run: |
+          echo hello

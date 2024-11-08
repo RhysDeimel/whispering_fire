@@ -15,7 +15,8 @@ jobs:
       - uses: actions/checkout@v4
 
       # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#multiline-strings
-      - name: Get changes
+      - name: Get data
+        id: pipeline_data
         env:
           BRANCH_NAME: ${{ github.head_ref }}
           VERSION_FILE_PATH: "src/whispering_fire/__version__.py"

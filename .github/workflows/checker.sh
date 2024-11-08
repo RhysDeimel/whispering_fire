@@ -10,4 +10,8 @@
 
 # get config changes
 
-echo "hello"
+branch_sha=$(echo -n "$BRANCH_NAME" | sha256sum | head -c 7)
+
+echo "branch_sha=$branch_sha"
+echo "branch_sha=$branch_sha" >> $GITHUB_OUTPUT
+echo "**branch_sha**: \`$branch_sha\`" >> $GITHUB_STEP_SUMMARY

@@ -116,7 +116,7 @@ jobs:
 
   # this exists to stop the edge case where converting from a "draft" PR
   #   to "Ready to review" gives you a small window to merge before the checks
-  #   kick in and prevent you. Mostly to stop accidental double-clicks instead of
+  #   kick in and prevent you. Mostly to stop accidental clicks instead of
   #   malicious behaviour.
   draft_check:
     runs-on: ubuntu-latest

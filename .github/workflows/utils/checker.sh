@@ -44,5 +44,12 @@ for item in "${pipelines[@]}"; do
         exit $exit_code
     fi
 
+    # cast to string, that GitHub actions can then ingest as a boolean via fromJSON()
+    if (( result > 0 )) ; then
+      result="true"
+    else
+      result="false"
+    fi
+
     echo "$name=$result" >> $GITHUB_OUTPUT
 done

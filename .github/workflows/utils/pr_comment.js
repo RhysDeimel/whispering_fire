@@ -21,8 +21,8 @@ module.exports = async ({github, context, core}) => {
 //         Workload version: ${WORKLOAD_VERSION}
 //         Image tag: ${IMAGE_TAG}
 //     `;
-    const output = `
-    hello
+    const output = ` \
+        hello \
     `;
 
 // 3. If we have a comment, update it, otherwise create a new one

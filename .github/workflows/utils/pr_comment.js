@@ -17,10 +17,10 @@ module.exports = async ({github, context, core}) => {
     const output = `
         #### Pipeline Data 📋️️
 
-        Branch sha: \`${BRANCH_SHA}\`
-        Workload version: \`${WORKLOAD_VERSION}\`
-        Image tag: \`${IMAGE_TAG}\`
-        `;
+        Branch sha: ${BRANCH_SHA}
+        Workload version: ${WORKLOAD_VERSION}
+        Image tag: ${IMAGE_TAG}
+    `;
 
 // 3. If we have a comment, update it, otherwise create a new one
     if (botComment) {

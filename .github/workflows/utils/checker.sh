@@ -8,7 +8,6 @@ echo "branch_sha=$branch_sha"
 echo "branch_sha=$branch_sha" >> $GITHUB_OUTPUT
 echo "**branch_sha**: \`$branch_sha\`" >> $GITHUB_STEP_SUMMARY
 
-
 workload_version=$(cat "$VERSION_FILE_PATH" | cut -d "'" -f 2)
 echo "workload_version=$workload_version"
 echo "workload_version=$workload_version" >> $GITHUB_OUTPUT
@@ -22,7 +21,6 @@ echo "**image_tag**: \`$image_tag\`" >> $GITHUB_STEP_SUMMARY
 
 # get changes
 change_schema="./.github/workflows/utils/change_schema.yml"
-
 # load yml array into a bash array
 # need to output each entry as a single line
 readarray pipelines < <(yq e -o=j -I=0 '.pipelines[]' $change_schema )

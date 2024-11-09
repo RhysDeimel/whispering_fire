@@ -9,6 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write # This is required for updating PRs with the comment
+    outputs:
+      app_source: ${{ steps.pipeline_data.outputs.app_source }}
+      db_migrations: ${{ steps.pipeline_data.outputs.db_migrations }}
+      docs: ${{ steps.pipeline_data.outputs.docs }}
+      iac: ${{ steps.pipeline_data.outputs.iac }}
+      tests: ${{ steps.pipeline_data.outputs.tests }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -42,8 +48,13 @@ jobs:
     steps:
       - run: echo "hello"
 
-#  test_docs:
-#    runs-on: ubuntu-latest
+  test_docs:
+    needs: [pipeline_data]
+    if: ! fromJSON(needs.pipeline_data.outputs.docs)
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "goodby"
+
 #
 #  test_iac:
 #    runs-on: ubuntu-latest

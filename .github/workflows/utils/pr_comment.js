@@ -22,9 +22,9 @@ module.exports = async ({github, context, core}) => {
 //         Image tag: ${IMAGE_TAG}
 //     `;
     const output = '#### Pipeline Data 📋\n️️' +
-        `Branch sha: ${BRANCH_SHA}\n` +
-        `Workload version: ${WORKLOAD_VERSION}\n` +
-        `Image tag: ${IMAGE_TAG}\n`
+        `Branch sha: \`${BRANCH_SHA}\`\n` +
+        `Workload version: \`${WORKLOAD_VERSION}\`\n` +
+        `Image tag: \`${IMAGE_TAG}\`\n`
     ;
 
 // 3. If we have a comment, update it, otherwise create a new one

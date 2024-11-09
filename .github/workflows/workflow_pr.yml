@@ -35,9 +35,11 @@ jobs:
             await script({github, context, core})
           
 
-#  test_application_code:
-#    runs-on: ubuntu-latest
-#
+  test_application_code:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "hello"
+
 #  test_docs:
 #    runs-on: ubuntu-latest
 #

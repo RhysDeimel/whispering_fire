@@ -42,13 +42,12 @@ for item in "${pipelines[@]}"; do
     # grep returns a 1 when it doesn't find any match, and thus, terminates immediately.
     # We instead run an OR on the grep command, and exit on anything greater than 1 so we don't
     # clobber other error codes.
-    echo "git diff $base $compare --name-only | grep -P -c '$regex'"
     exit_code=0
-    result=$(git diff $base $compare --name-only | grep -P -c '$regex' || exit_code=$?)
+    result=$(git diff $base $compare --name-only | grep -P -c "$regex" || exit_code=$?)
+    echo $result
     if (( exit_code > 1 )) ; then
         exit $exit_code
     fi
 
-    echo $name = $result
-    echo
+    echo "$name=$result" >> $GITHUB_OUTPUT
 done

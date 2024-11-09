@@ -1,0 +1,13 @@
+# need to use `grep -P` to support negative lookaheads
+pipelines:
+  - name: app_source
+    regex: 'src\/(?!alembic).+?.py$|pyproject\.toml$|^Dockerfile'  # any python file in src/ but ignore alembic
+  - name: db_migrations
+    regex: 'src\/alembic\/.+|alembic.ini$'
+  - name: docs
+    regex: '.+md?$|(mkdocs\.yml|\.pyspelling\.yml|\.wordlist\.txt)$'
+  - name: iac
+    regex: 'terraform\/.+?(\.hcl|\.tfvars|\.tf|\.tfvars\.auto)$'
+  - name: tests
+    regex: 'tests\/.+'
+

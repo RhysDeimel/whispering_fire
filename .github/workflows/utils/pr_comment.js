@@ -14,13 +14,14 @@ module.exports = async ({github, context, core}) => {
     })
 
 // 2. Prepare the format of the comment
-    const output = `
-        #### Pipeline Data 📋️️
-
-        Branch sha: ${BRANCH_SHA}
-        Workload version: ${WORKLOAD_VERSION}
-        Image tag: ${IMAGE_TAG}
-    `;
+//     const output = `
+//         #### Pipeline Data 📋️️
+//
+//         Branch sha: ${BRANCH_SHA}
+//         Workload version: ${WORKLOAD_VERSION}
+//         Image tag: ${IMAGE_TAG}
+//     `;
+    const output = "hello"
 
 // 3. If we have a comment, update it, otherwise create a new one
     if (botComment) {

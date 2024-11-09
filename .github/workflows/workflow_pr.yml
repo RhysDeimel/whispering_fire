@@ -50,7 +50,7 @@ jobs:
 
   test_docs:
     needs: [pipeline_data]
-    if: ! fromJSON(needs.pipeline_data.outputs.docs)
+    if: ${{ ! fromJSON(needs.pipeline_data.outputs.docs) }}  # needs expression syntax when starting with "!"
     runs-on: ubuntu-latest
     steps:
       - run: echo "goodby"

@@ -10,7 +10,7 @@ module.exports = async ({github, context, core}) => {
         issue_number: context.issue.number,
     })
     const botComment = comments.find(comment => {
-        return comment.user.type === 'Bot' && comment.body.includes('Pipeline Data 📋️️')
+        return comment.user.type === 'Bot' && comment.body.includes('#### Pipeline Data 📋️\n️')
     })
 
     // Not using multiline template literal because actions turns it into a code block

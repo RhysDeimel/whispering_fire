@@ -11,7 +11,7 @@ module.exports = async ({github, context, core}) => {
     })
     const botComment = comments.find(comment => {
         console.log(comment.body);
-        comment.body.includes('Pipeline Data 📋️️');
+        console.log(comment.body.includes('Pipeline Data 📋️️'));
         return comment.user.type === 'Bot' && comment.body.includes('Pipeline Data 📋️️')
     })
 
@@ -20,7 +20,8 @@ module.exports = async ({github, context, core}) => {
         '\n' +
         `Branch sha: \`${BRANCH_SHA}\`\n` +
         `Workload version: \`${WORKLOAD_VERSION}\`\n` +
-        `Image tag: \`${IMAGE_TAG}\`\n`
+        `Image tag: \`${IMAGE_TAG}\`\n` +
+        "hi"
     ;
 
 // 3. If we have a comment, update it, otherwise create a new one

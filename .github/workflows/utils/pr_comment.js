@@ -10,6 +10,7 @@ module.exports = async ({github, context, core}) => {
         issue_number: context.issue.number,
     })
     const botComment = comments.find(comment => {
+        console.log(comment.body)
         return comment.user.type === 'Bot' && comment.body.includes('#### Pipeline Data 📋️\n️')
     })
 

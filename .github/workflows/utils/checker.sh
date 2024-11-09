@@ -34,16 +34,13 @@ for item in "${pipelines[@]}"; do
     echo "name: $name"
     echo "regex: $regex"
 
-    base="master"
-    compare="HEAD"
-
     # Grep with -e
     # This causes the run to terminate immediately when any pipeline exits with a non-zero status.
     # grep returns a 1 when it doesn't find any match, and thus, terminates immediately.
     # We instead run an OR on the grep command, and exit on anything greater than 1 so we don't
     # clobber other error codes.
     exit_code=0
-    result=$(git diff $base $compare --name-only | grep -P -c "$regex" || exit_code=$?)
+    result=$(git diff $BASE $COMPARE --name-only | grep -P -c "$regex" || exit_code=$?)
     echo $result
     if (( exit_code > 1 )) ; then
         exit $exit_code

@@ -18,6 +18,8 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.head_ref }}
           VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
+          BASE: ${{ github.event.pull_request.base.sha }}
+          COMPARE: ${{ github.sha }}
         run: .github/workflows/utils/checker.sh
 
       - name: Add details to PR

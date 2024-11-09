@@ -36,6 +36,8 @@ jobs:
           
 
   test_application_code:
+    needs: [pipeline_data]
+    if: fromJSON(needs.pipeline_data.outputs.app_source)
     runs-on: ubuntu-latest
     steps:
       - run: echo "hello"

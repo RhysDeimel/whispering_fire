@@ -11,6 +11,8 @@ jobs:
       pull-requests: write # This is required for updating PRs with the comment
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#multiline-strings
       - name: Get data

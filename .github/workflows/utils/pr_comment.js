@@ -13,14 +13,7 @@ module.exports = async ({github, context, core}) => {
         return comment.user.type === 'Bot' && comment.body.includes('Pipeline Data 📋️️')
     })
 
-// 2. Prepare the format of the comment
-//     const output = `
-//         #### Pipeline Data 📋️️
-//
-//         Branch sha: ${BRANCH_SHA}
-//         Workload version: ${WORKLOAD_VERSION}
-//         Image tag: ${IMAGE_TAG}
-//     `;
+    // Not using multiline template literal because actions turns it into a code block
     const output = '#### Pipeline Data 📋\n️️' +
         `Branch sha: \`${BRANCH_SHA}\`\n` +
         `Workload version: \`${WORKLOAD_VERSION}\`\n` +

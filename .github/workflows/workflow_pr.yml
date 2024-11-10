@@ -23,9 +23,10 @@ jobs:
       - name: Get data
         id: pipeline_data
         env:
-          BRANCH_NAME: ${{ github.head_ref }}
           BASE: ${{ github.event.pull_request.base.sha }}
+          BRANCH_NAME: ${{ github.head_ref }}
           COMPARE: ${{ github.sha }}
+          VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
         run: |
           .github/workflows/utils/pipeline_data.sh
 

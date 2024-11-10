@@ -1,0 +1,47 @@
+# on master
+on:
+  pull_request:
+    types: [ closed ]
+    branches:
+      - main
+
+
+
+jobs:
+  pipeline_data:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      app_source: ${{ steps.pipeline_data.outputs.app_source }}
+      db_migrations: ${{ steps.pipeline_data.outputs.db_migrations }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # so we can diff against main
+
+      - name: Get data
+        id: pipeline_data
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          BRANCH_NAME: ${{ github.head_ref }}
+          COMPARE: ${{ github.sha }}
+          VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
+        run: |
+          .github/workflows/utils/pipeline_data.sh
+
+
+  promote_app_image:
+    needs: [pipeline_data]
+    if: fromJSON(needs.pipeline_data.outputs.app_source)
+    runs-on: ubuntu-latest
+    steps:
+      run: |
+        echo hello
+
+  promote_db_migration_image:
+    needs: [pipeline_data]
+    if: fromJSON(needs.pipeline_data.outputs.db_migrations)
+    runs-on: ubuntu-latest
+    steps:
+      run: |
+        echo hello

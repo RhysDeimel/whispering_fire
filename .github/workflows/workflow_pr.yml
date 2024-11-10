@@ -82,7 +82,7 @@ jobs:
 
 
   ## skip builds on draft PRs
-  build_application_code:
+  build_application_image:
     needs: [test_application_code]
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
@@ -90,7 +90,7 @@ jobs:
       - run: |
           echo hello
 
-  build_db_migration_code:
+  build_db_migration_image:
     needs: [pipeline_data, test_application_code]
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false && fromJSON(needs.pipeline_data.outputs.db_migrations)

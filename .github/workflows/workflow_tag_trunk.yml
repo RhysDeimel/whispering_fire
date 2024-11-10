@@ -29,5 +29,4 @@ jobs:
           git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
           git tag -fa "$WORKLOAD_VERSION" "${GITHUB_SHA}" -m "Release $WORKLOAD_VERSION"
-          git push origin $WORKLOAD_VERSION
-
+          git push --force origin $WORKLOAD_VERSION

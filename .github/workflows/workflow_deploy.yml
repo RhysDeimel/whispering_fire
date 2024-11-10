@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy to ${{ inputs.environment }} by @${{ github.actor }}
+run-name: Deploy to ${{ inputs.image_tag }} to ${{ inputs.environment }} by @${{ github.actor }}
 
 
 on:

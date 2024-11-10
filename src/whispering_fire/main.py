@@ -19,3 +19,4 @@ def calc_square(num: int):
 
 def add_nums(a, b):
     return a + b
+

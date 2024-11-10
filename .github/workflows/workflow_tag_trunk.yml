@@ -1,3 +1,5 @@
+name: Tag trunk with version
+
 on:
   push:
     branches:

@@ -1,4 +1,5 @@
 name: Tag trunk with version
+run-name: 'Tagging trunk after update: ${{ github.event.push.head_commit.message }}'
 
 on:
   push:

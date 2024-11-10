@@ -1,7 +1,7 @@
 # need to use `grep -P` to support negative lookaheads
 pipelines:
   - name: app_source
-    regex: 'src\/(?!alembic).+?.py$|pyproject\.toml$|^Dockerfile'  # any python file in src/ but ignore alembic
+    regex: 'src\/.+?.py$|pyproject\.toml$|^Dockerfile'
   - name: db_migrations
     regex: 'src\/alembic\/.+|alembic.ini$'
   - name: docs

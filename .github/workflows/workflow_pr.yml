@@ -101,20 +101,20 @@ jobs:
   build_docs:
     needs: [test_docs_only, test_application_code]
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    if: github.event.pull_request.draft == false && ! failure()
     steps:
       - run: |
           echo hello
-#
-#
-#  # this exists to stop the edge case where converting from a "draft" PR
-#  #   to "Ready to review" gives you a small window to merge before the checks
-#  #   kick in and prevent you. Mostly to stop accidental clicks instead of
-#  #   malicious behaviour.
-#  draft_check:
-#    runs-on: ubuntu-latest
-#    if: github.event.pull_request.draft == true
-#    steps:
-#      - run: |
-#          echo "This PR is still a draft. Please upgrade it"
-#          exit 1
+
+
+  # this exists to stop the edge case where converting from a "draft" PR
+  #   to "Ready to review" gives you a small window to merge before the checks
+  #   kick in and prevent you. Mostly to stop accidental clicks instead of
+  #   malicious behaviour.
+  draft_check:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == true
+    steps:
+      - run: |
+          echo "This PR is still a draft. Please upgrade it"
+          exit 1

@@ -35,13 +35,13 @@ jobs:
     if: fromJSON(needs.pipeline_data.outputs.app_source)
     runs-on: ubuntu-latest
     steps:
-      run: |
-        echo hello
+      - run: |
+          echo hello
 
   promote_db_migration_image:
     needs: [pipeline_data]
     if: fromJSON(needs.pipeline_data.outputs.db_migrations)
     runs-on: ubuntu-latest
     steps:
-      run: |
-        echo hello
+      - run: |
+          echo hello

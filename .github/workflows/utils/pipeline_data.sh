@@ -19,7 +19,7 @@ echo "image_tag=$image_tag" >> $GITHUB_OUTPUT
 echo "**image_tag**: \`$image_tag\`" >> $GITHUB_STEP_SUMMARY
 
 
-# get changes
+# get changed files to trigger relevant jobs
 change_schema="./.github/workflows/utils/change_schema.yml"
 # load yml array into a bash array
 # need to output each entry as a single line
@@ -42,6 +42,13 @@ for item in "${pipelines[@]}"; do
     echo $result
     if (( exit_code > 1 )) ; then
         exit $exit_code
+    fi
+
+    # cast to string, that GitHub actions can then ingest as a boolean via fromJSON()
+    if (( result > 0 )) ; then
+      result="true"
+    else
+      result="false"
     fi
 
     echo "$name=$result" >> $GITHUB_OUTPUT

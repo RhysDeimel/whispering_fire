@@ -9,19 +9,26 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write # This is required for updating PRs with the comment
+    outputs:
+      app_source: ${{ steps.pipeline_data.outputs.app_source }}
+      db_migrations: ${{ steps.pipeline_data.outputs.db_migrations }}
+      docs: ${{ steps.pipeline_data.outputs.docs }}
+      iac: ${{ steps.pipeline_data.outputs.iac }}
+      tests: ${{ steps.pipeline_data.outputs.tests }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # so we diff against main
+          fetch-depth: 2  # so we can diff against main
 
       - name: Get data
         id: pipeline_data
         env:
-          BRANCH_NAME: ${{ github.head_ref }}
-          VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
           BASE: ${{ github.event.pull_request.base.sha }}
+          BRANCH_NAME: ${{ github.head_ref }}
           COMPARE: ${{ github.sha }}
-        run: .github/workflows/utils/checker.sh
+          VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
+        run: |
+          .github/workflows/utils/pipeline_data.sh
 
       - name: Add details to PR
         uses: actions/github-script@v7
@@ -33,43 +40,73 @@ jobs:
           script: |
             const script = require('./.github/workflows/utils/pr_comment.js')
             await script({github, context, core})
-          
-
-#  test_application_code:
-#    runs-on: ubuntu-latest
-#
-#  test_docs:
-#    runs-on: ubuntu-latest
-#
-#  test_iac:
-#    runs-on: ubuntu-latest
 
 
+  check_version:
+    needs: [pipeline_data]
+    if: fromJSON(needs.pipeline_data.outputs.app_source)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          path: compare
 
-## skip builds on draft PRs
-#  build_application_code:
-#    runs-on: ubuntu-latest
-#    if: github.event.pull_request.draft == false
-#    steps:
-#      - run: |
-#          echo hello
-#
-#  build_docs:
-#    runs-on: ubuntu-latest
-#    if: github.event.pull_request.draft == false
-#    steps:
-#      - run: |
-#          echo hello
-#
-#
-#  # this exists to stop the edge case where converting from a "draft" PR
-#  #   to "Ready to review" gives you a small window to merge before the checks
-#  #   kick in and prevent you. Mostly to stop accidental clicks instead of
-#  #   malicious behaviour.
-#  draft_check:
-#    runs-on: ubuntu-latest
-#    if: github.event.pull_request.draft == true
-#    steps:
-#      - run: |
-#          echo "This PR is still a draft. Please upgrade it"
-#          exit 1
+      - name: Checkout destination
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+
+      - name: Check version
+        env:
+          VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
+        run: |
+          ./compare/.github/workflows/utils/version_check.sh
+
+
+  test_application_code:
+    needs: [pipeline_data, check_version]
+    if: fromJSON(needs.pipeline_data.outputs.app_source)
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "test application code"
+
+
+  test_docs_only:
+    needs: [pipeline_data]
+    if: ${{ fromJSON(needs.pipeline_data.outputs.docs) && ! fromJSON(needs.pipeline_data.outputs.app_source) }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "test docs"
+
+
+  ## skip builds on draft PRs
+  build_application_code:
+    needs: [test_application_code]
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - run: |
+          echo hello
+
+  build_db_migration_code:
+    needs: [pipeline_data, test_application_code]
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false && fromJSON(needs.pipeline_data.outputs.db_migrations)
+    steps:
+      - run: |
+          echo hello
+
+
+  # this exists to stop the edge case where converting from a "draft" PR
+  #   to "Ready to review" gives you a small window to merge before the checks
+  #   kick in and prevent you. Mostly to stop accidental clicks instead of
+  #   malicious behaviour.
+  draft_check:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == true
+    steps:
+      - run: |
+          echo "This PR is still a draft. Please upgrade it"
+          exit 1

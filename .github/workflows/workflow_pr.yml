@@ -80,16 +80,8 @@ jobs:
     steps:
       - run: echo "test docs"
 
-#  test_iac:
-#    needs: [pipeline_data]
-#    if: fromJSON(needs.pipeline_data.outputs.iac)
-#    runs-on: ubuntu-latest
-#    steps:
-#      - run: echo "test iac"
 
-
-
-## skip builds on draft PRs
+  ## skip builds on draft PRs
   build_application_code:
     needs: [test_application_code]
     runs-on: ubuntu-latest
@@ -98,10 +90,10 @@ jobs:
       - run: |
           echo hello
 
-  build_docs:
-    needs: [test_docs_only, test_application_code]
+  build_db_migration_code:
+    needs: [pipeline_data, test_application_code]
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false && ! failure()
+    if: github.event.pull_request.draft == false && fromJSON(needs.pipeline_data.outputs.db_migrations)
     steps:
       - run: |
           echo hello

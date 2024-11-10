@@ -7,7 +7,6 @@ on:
       - master
 
 
-
 jobs:
   pipeline_data:
     if: github.event.pull_request.merged == true

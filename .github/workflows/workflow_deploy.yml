@@ -1,0 +1,40 @@
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment in which to deploy the image'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+      image_tag:
+        description: 'The image tag to use in the deployment. Normally a version number'
+        required: true
+        type: string
+
+
+jobs:
+  non-prod:
+    if: ${{ contains('dev,staging', inputs.environment) }}
+    runs-on: ubuntu-latest
+    environment: inputs.environment
+    concurrency:
+      group: ${{ inputs.environment }}
+      cancel-in-progress: false
+    steps:
+      - run: |
+          echo hello
+
+
+  prod:
+    if: inputs.environment == 'prod'
+    runs-on: ubuntu-latest
+    environment: prod
+    concurrency:
+      group: prod
+      cancel-in-progress: false
+    steps:
+      - run: |
+          echo hello

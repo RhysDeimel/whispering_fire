@@ -30,3 +30,4 @@ jobs:
 
           git tag -fa "$WORKLOAD_VERSION" "${GITHUB_SHA}" -m "Release $WORKLOAD_VERSION"
           git push origin $WORKLOAD_VERSION
+

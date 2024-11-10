@@ -18,16 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2  # so we diff against main
+          fetch-depth: 2  # so we can diff against main
 
       - name: Get data
         id: pipeline_data
         env:
           BRANCH_NAME: ${{ github.head_ref }}
-          VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
           BASE: ${{ github.event.pull_request.base.sha }}
           COMPARE: ${{ github.sha }}
-        run: .github/workflows/utils/checker.sh
+        run: |
+          .github/workflows/utils/pipeline_data.sh
 
       - name: Add details to PR
         uses: actions/github-script@v7
@@ -39,42 +39,71 @@ jobs:
           script: |
             const script = require('./.github/workflows/utils/pr_comment.js')
             await script({github, context, core})
-          
 
-  test_application_code:
+
+  check_version:
     needs: [pipeline_data]
     if: fromJSON(needs.pipeline_data.outputs.app_source)
     runs-on: ubuntu-latest
     steps:
-      - run: echo "hello"
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          path: compare
+
+      - name: Checkout destination
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+
+      - name: Check version
+        env:
+          VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
+        run: |
+          .github/workflows/utils/version_check.sh
+
+
+  test_application_code:
+    needs: [pipeline_data, check_version]
+    if: fromJSON(needs.pipeline_data.outputs.app_source)
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "test application code"
+
 
   test_docs:
     needs: [pipeline_data]
-    if: ${{ ! fromJSON(needs.pipeline_data.outputs.docs) }}  # needs expression syntax when starting with "!"
+    if: ${{ fromJSON(needs.pipeline_data.outputs.docs) && ! fromJSON(needs.pipeline_data.outputs.app_source) }}
     runs-on: ubuntu-latest
     steps:
-      - run: echo "goodby"
+      - run: echo "test docs"
 
-#
 #  test_iac:
+#    needs: [pipeline_data]
+#    if: fromJSON(needs.pipeline_data.outputs.iac)
 #    runs-on: ubuntu-latest
+#    steps:
+#      - run: echo "test iac"
 
 
 
 ## skip builds on draft PRs
-#  build_application_code:
-#    runs-on: ubuntu-latest
-#    if: github.event.pull_request.draft == false
-#    steps:
-#      - run: |
-#          echo hello
-#
-#  build_docs:
-#    runs-on: ubuntu-latest
-#    if: github.event.pull_request.draft == false
-#    steps:
-#      - run: |
-#          echo hello
+  build_application_code:
+    needs: [test_application_code]
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - run: |
+          echo hello
+
+  build_docs:
+    needs: [test_docs, test_application_code]
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - run: |
+          echo hello
 #
 #
 #  # this exists to stop the edge case where converting from a "draft" PR

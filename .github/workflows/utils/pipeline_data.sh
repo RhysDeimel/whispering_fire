@@ -19,7 +19,7 @@ echo "image_tag=$image_tag" >> $GITHUB_OUTPUT
 echo "**image_tag**: \`$image_tag\`" >> $GITHUB_STEP_SUMMARY
 
 
-# get changes
+# get changed files to trigger relevant jobs
 change_schema="./.github/workflows/utils/change_schema.yml"
 # load yml array into a bash array
 # need to output each entry as a single line

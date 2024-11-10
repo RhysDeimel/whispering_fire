@@ -1,0 +1,27 @@
+on:
+  push:
+#    branches:
+#      - main
+#      - master
+
+jobs:
+  tag_trunk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version
+        env:
+          VERSION_FILE_PATH: "src/whispering_fire/__version__.py"
+        run: |
+          workload_version=$(cat "$VERSION_FILE_PATH" | cut -d "'" -f 2)
+          echo "workload_version=$workload_version" >> $GITHUB_OUTPUT 
+
+      - name: Tag and create release
+        run: |
+          # setup git user name and email
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
+          git tag -fa "$WORKLOAD_VERSION" "${GITHUB_SHA}" -m "Release $WORKLOAD_VERSION"
+          git push origin $WORKLOAD_VERSION

@@ -60,7 +60,7 @@ jobs:
     steps:
       - run: |
           echo '${{ needs.define-matrix.outputs.matrix }}' | jq '.${{ inputs.environment }}'
-          test=$(echo '${{ needs.define-matrix.outputs.matrix }}' | jq '.${{ inputs.environment }})'
+          test=$(echo '${{ needs.define-matrix.outputs.matrix }}' | jq '.${{ inputs.environment }}')
           echo "test=$test"
           echo "test=$test" >> "$GITHUB_OUTPUT"
           

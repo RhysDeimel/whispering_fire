@@ -1,5 +1,5 @@
 environments:
-  dev: ""
+  dev: null
   staging: "gfo5-staging-e152d29a"
   prod:
     wave_0:
@@ -8,5 +8,5 @@ environments:
     wave_1:
       nabc: "gfo5-nabc-88d96078"
     wave_2:
-      flashpoint: ""
-      wisp: ""
+      flashpoint: null
+      wisp: null

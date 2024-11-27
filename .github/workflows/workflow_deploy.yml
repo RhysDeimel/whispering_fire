@@ -35,9 +35,9 @@ jobs:
       - name: Define matrix
         id: matrix
         run: |
-          matrix=$(cat .github/workflows/utils/environments.yml | yq 'with(.environments.prod; map_values(. |= to_entries))' | yq '.environments' -o json | jq -c)
+          matrix=$(cat .github/workflows/utils/environments.yml | yq 'with(.environments.prod; map_values(. |= to_entries))' | yq '.environments' -o json)
           echo $matrix
-          echo $matrix >> "$GITHUB_OUTPUT"
+          echo matrix=$matrix >> "$GITHUB_OUTPUT"
 
   
 

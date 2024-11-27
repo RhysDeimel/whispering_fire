@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     strategy:
-#      max-parallel: 1
+      max-parallel: 2
       matrix:
         include: ${{ fromJson(needs.define-matrix.outputs.matrix).prod.wave_0 }}
     concurrency:
@@ -89,4 +89,57 @@ jobs:
     steps:
       - run: |
           echo "key: ${{ matrix.key }} value: ${{ matrix.value }}"
+          sleep 30
 
+  prod_wave_1:
+    if: inputs.environment == 'prod'
+    needs: [define-matrix]
+    runs-on: ubuntu-latest
+    environment: prod
+    strategy:
+      max-parallel: 2
+      matrix:
+        include: ${{ fromJson(needs.define-matrix.outputs.matrix).prod.wave_1 }}
+    concurrency:
+      group: prod
+      cancel-in-progress: false
+    permissions: # needed for Google OIDC credentials
+      contents: "read"
+      id-token: "write"
+    env:
+      PROJECT_ID: customer-bootstrap
+      GAR_LOCATION: us
+      REGION: us-central1
+      APP: orion-backend
+
+    steps:
+      - run: |
+          echo "key: ${{ matrix.key }} value: ${{ matrix.value }}"
+          sleep 30
+
+
+  prod_wave_2:
+    if: inputs.environment == 'prod'
+    needs: [define-matrix]
+    runs-on: ubuntu-latest
+    environment: prod
+    strategy:
+      max-parallel: 2
+      matrix:
+        include: ${{ fromJson(needs.define-matrix.outputs.matrix).prod.wave_2 }}
+    concurrency:
+      group: prod
+      cancel-in-progress: false
+    permissions: # needed for Google OIDC credentials
+      contents: "read"
+      id-token: "write"
+    env:
+      PROJECT_ID: customer-bootstrap
+      GAR_LOCATION: us
+      REGION: us-central1
+      APP: orion-backend
+
+    steps:
+      - run: |
+          echo "key: ${{ matrix.key }} value: ${{ matrix.value }}"
+          sleep 30

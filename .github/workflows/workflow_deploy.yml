@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     strategy:
-      max-parallel: 1
+#      max-parallel: 1
       matrix: ${{ fromJson(needs.define-matrix.outputs.matrix).prod.wave_0 }}
     concurrency:
       group: prod

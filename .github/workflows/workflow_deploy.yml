@@ -72,7 +72,8 @@ jobs:
     environment: prod
     strategy:
 #      max-parallel: 1
-      matrix: ${{ fromJson(needs.define-matrix.outputs.matrix).prod.wave_0 }}
+      matrix:
+        include: ${{ fromJson(needs.define-matrix.outputs.matrix).prod.wave_0 }}
     concurrency:
       group: prod
       cancel-in-progress: false

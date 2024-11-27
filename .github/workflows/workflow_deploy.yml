@@ -1,5 +1,5 @@
 name: Deploy
-run-name: Deploy to ${{ inputs.image_tag }} to ${{ inputs.environment }} by @${{ github.actor }}
+run-name: Deploy ${{ inputs.image_tag }} to ${{ inputs.environment }} by @${{ github.actor }}
 
 
 on:
@@ -10,35 +10,81 @@ on:
         required: true
         type: choice
         options:
-          - dev
+#          - dev
           - staging
           - prod
       image_tag:
         description: 'The image tag to use in the deployment. Normally a version number'
         required: true
         type: string
+      migration_command:
+        description: 'A comma separated list of args to pass to the migration job, e.g.: "alembic,upgrade,head"'
+        default: 'alembic,upgrade,head'
+        required: false
+        type: string
 
 
 jobs:
-  non-prod:
+  define-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+
+    steps:
+      - name: Define matrix
+        id: matrix
+        run: |
+          matrix=$(cat .github/workflows/utils/environments.yml | yq 'with(.environments.prod; map_values(. |= to_entries))' | yq '.environments' -o json)
+          echo $matrix
+          echo $matrix >> "$GITHUB_OUTPUT"
+
+  
+
+  nonprod:
+    needs: [define-matrix]
     if: ${{ contains('dev,staging', inputs.environment) }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     concurrency:
       group: ${{ inputs.environment }}
       cancel-in-progress: false
+    permissions: # needed for Google OIDC credentials
+      contents: "read"
+      id-token: "write"
+    env:
+      PROJECT_ID: customer-bootstrap
+      GAR_LOCATION: us
+      REGION: us-central1
+      APP: orion-backend
     steps:
       - run: |
-          echo hello
+          echo ${{ needs.define-matrix.outputs.matrix }} | jq ${{ inputs.environment }}
+          test=$(echo ${{ needs.define-matrix.outputs.matrix }} | jq ${{ inputs.environment }})
+          echo $test
+          echo $test >> "$GITHUB_OUTPUT"
+          
 
-
-  prod:
+  prod_wave_0:
     if: inputs.environment == 'prod'
+    needs: [define-matrix]
     runs-on: ubuntu-latest
     environment: prod
+    strategy:
+      max-parallel: 1
+      matrix: ${{ fromJson(needs.define-matrix.outputs.matrix).prod }}
     concurrency:
       group: prod
       cancel-in-progress: false
+    permissions: # needed for Google OIDC credentials
+      contents: "read"
+      id-token: "write"
+    env:
+      PROJECT_ID: customer-bootstrap
+      GAR_LOCATION: us
+      REGION: us-central1
+      APP: orion-backend
+
     steps:
       - run: |
-          echo hello
+          echo "key: ${{ matrix.key }} value: ${{ matrix.value }}"
+

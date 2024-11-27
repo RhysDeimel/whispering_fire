@@ -62,7 +62,7 @@ jobs:
           echo ${{ needs.define-matrix.outputs.matrix }} | jq ${{ inputs.environment }}
           test=$(echo ${{ needs.define-matrix.outputs.matrix }} | jq ${{ inputs.environment }})
           echo $test
-          echo $test >> "$GITHUB_OUTPUT"
+          echo test=$test >> "$GITHUB_OUTPUT"
           
 
   prod_wave_0:

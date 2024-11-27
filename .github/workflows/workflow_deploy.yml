@@ -93,7 +93,7 @@ jobs:
 
   prod_wave_1:
     if: inputs.environment == 'prod'
-    needs: [define-matrix]
+    needs: [define-matrix, prod_wave_0]
     runs-on: ubuntu-latest
     environment: prod
     strategy:
@@ -120,7 +120,7 @@ jobs:
 
   prod_wave_2:
     if: inputs.environment == 'prod'
-    needs: [define-matrix]
+    needs: [define-matrix, prod_wave_1]
     runs-on: ubuntu-latest
     environment: prod
     strategy:

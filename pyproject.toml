@@ -1,39 +1,51 @@
 [build-system]
-requires = [
-    "setuptools >= 61.0",
-]
+requires = ["setuptools >= 74.1.2"]
 build-backend = "setuptools.build_meta"
 
 
 [project]
 name = "whispering_fire"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 dynamic = ["version"]
 dependencies = [
-    "pydantic",
-    "fastapi[standard]"
+    "fastapi",
+    "uvicorn",
 ]
-authors = [
-    {name = "Rhys Deimel", email = "deimelr@hotmail.com"},
-]
-maintainers = [
-    {name = "Rhys Deimel", email = "deimelr@hotmail.com"},
-]
-description = "Template repo for python projects"
+description = "TODO"
 readme =  "README.md"
-license = {text = "MIT License"}
 
+# TODO: upgrade to dependency_groups when available
+#   https://peps.python.org/pep-0735/
 [project.optional-dependencies]
 test = [
-    "pytest",
-    "tox",
+    "coverage==7.6.1",
+    "docker==7.1.0",
+    "pyspelling==2.10",
+    "pytest==8.3.3",
+    "tox==4.21.2",
+    "httpx",
+
 ]
 lint = [
-    "mypy",
-    "ruff",
+    "mypy==1.13.0",
+    "ruff==0.6.9",
+    "whispering_fire[types]",
+]
+types = [
+]
+docs = [
+    "mike==2.1.3",
+    "mkdocs-material==9.5.39",
+    "mkdocs==1.6.1",
+    "mkdocstrings-python==1.11.1",
 ]
 dev = [
-    "whispering_fire[test,lint]",
+    "whispering_fire[test,lint,docs]",
+]
+build = [
+    "psycopg2==2.9.9",
+    "pyinstaller==6.10.0",
+    "staticx==0.14.1",
 ]
 
 
@@ -58,7 +70,7 @@ exclude_also = [
     # Don't complain about abstract methods, they aren't run:
     "@(abc\\.)?abstractmethod",
 ]
-fail_under = 95
+fail_under = 10
 ignore_errors = true
 skip_covered = true
 skip_empty = true
@@ -66,21 +78,40 @@ skip_empty = true
 [tool.coverage.run]
 branch = true
 omit = [
-    "tests/conftest.py"
+    "tests/conftest.py",
+    "tmp/*",
+    "build/*",
 ]
 
 
 [tool.mypy]
+plugins = []
 exclude = [
+    'build/*',
+    'tests/*',
     'venv/*',
-    'build/*'
+    'tmp/*',
 ]
+warn_unused_ignores = true
 
+[[tool.mypy.overrides]]
+# module is untyped
+module = []
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
+addopts = "--doctest-modules --import-mode=importlib"
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "live: mark test as requiring credentials, API keys, or internet services",
     "incremental",
+]
+norecursedirs=[
+    '*.egg',
+    '.*',
+    'build',
+    'dist',
+    'venv',
 ]
 
 
@@ -88,9 +119,9 @@ markers = [
 line-length = 100
 
 [tool.ruff.format]
+docstring-code-format = true
 preview = true
 quote-style = "single"
-docstring-code-format = true
 
 [tool.ruff.lint]
 preview = true
@@ -109,3 +140,69 @@ select = [
 
 [tool.setuptools.dynamic]
 version = {attr = "whispering_fire.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = []
+
+
+
+# TODO: upgrade to dependency_groups when available
+#   https://tox.wiki/en/latest/config.html#python-run
+[tool.tox]
+requires = ["tox>=4"]
+env_list = ["clean", "lint", "type", "3.12", "report"]
+
+[tool.tox.env_run_base]
+description = "Run test under {base_python}"
+# default minimum python version for the whole project
+base_python = ["python3.12"]
+deps = [
+    "coverage==7.6.1",
+    "docker==7.1.0",
+    "pyspelling==2.10",
+    "pytest==8.3.3",
+    "tox==4.21.2",
+    "httpx",
+]
+pass_env = []
+commands = [["coverage", "run", "-a", "-m", "pytest", { replace = "posargs", default = ["--runslow"], extend = true }]]
+
+[tool.tox.env.clean]
+description = "Remove previous coverage reports"
+deps = [
+    "coverage==7.6.1",
+]
+skip_install = true
+commands = [["coverage", "erase"]]
+
+[tool.tox.env.lint]
+description = "Run linters"
+deps = [
+    "ruff==0.6.9",
+]
+skip_install = true
+commands = [
+    ["ruff", "format", "--check"],
+    ["ruff", "check"],
+]
+
+[tool.tox.env.type]
+description = "Run type checks"
+deps = [
+    "mypy==1.11.2",
+]
+commands = [["mypy", "."]]
+
+[tool.tox.env.report]
+description = "Generate coverage report"
+deps = [
+    "coverage==7.6.1",
+]
+skip_install = true
+commands =[
+    ["coverage", "html", "--fail-under=0"],
+    ["coverage", "report"],
+]

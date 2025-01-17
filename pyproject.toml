@@ -10,6 +10,13 @@ dynamic = ["version"]
 dependencies = [
     "fastapi",
     "uvicorn",
+    "httpx",
+    "opentelemetry-distro==0.50b0",
+    "opentelemetry-exporter-gcp-trace",
+#    "opentelemetry-exporter-otlp==1.29.0",
+#    "opentelemetry-instrumentation-fastapi==0.50b0",
+#    "opentelemetry-instrumentation-logging==0.50b0",
+#    "python-json-logger",
 ]
 description = "TODO"
 readme =  "README.md"
@@ -24,7 +31,6 @@ test = [
     "pytest==8.3.3",
     "tox==4.21.2",
     "httpx",
-
 ]
 lint = [
     "mypy==1.13.0",

@@ -12,8 +12,15 @@ ARG PACKAGE_VERSION
 FROM python:${PY_VERSION}-slim-${DEBIAN_RELEASE_NAME} AS dev
 WORKDIR /app
 
+# This is a docker caching workaround because pip doesn't yet support installing
+# only dependencies without the project
+COPY ./pyproject.toml ./
+COPY ./src/whispering_fire/__init__.py ./src/whispering_fire/
+COPY ./src/whispering_fire/__version__.py ./src/whispering_fire/
+RUN pip install --no-cache-dir .[dev]
+
 COPY . .
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir --no-deps .[dev]
 
 EXPOSE 8080 
 CMD ["python", "-m", "whispering_fire"]

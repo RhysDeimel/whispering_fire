@@ -2,22 +2,6 @@ import os
 
 import httpx
 from fastapi import FastAPI, Request
-from opentelemetry import trace
-from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import (
-    SimpleSpanProcessor,
-)
-
-provider = TracerProvider()
-trace.set_tracer_provider(provider)
-
-
-cloud_trace_exporter = CloudTraceSpanExporter()
-provider.add_span_processor(SimpleSpanProcessor(cloud_trace_exporter))
-
-
-tracer = trace.get_tracer(__name__)
 
 app = FastAPI()
 
@@ -39,6 +23,7 @@ def get_envs():
 @app.get('/weather')
 def weather():
     r = httpx.get('https://wttr.in/Sydney?format=4')
+
     location, weather = r.text.split(': ')
 
     return {location: weather.strip()}
@@ -49,10 +34,10 @@ def dump(request: Request):
     return request.headers
 
 
-@app.get('/trace')
-def send_hello():
-    with tracer.start_as_current_span('foo'):
-        return 'Hello world!'
+# @app.get('/trace')
+# def send_hello():
+#     with tracer.start_as_current_span('foo'):
+#         return 'Hello world!'
 
 
 @app.get('/two_pow/{num}')

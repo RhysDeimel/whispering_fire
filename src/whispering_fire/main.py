@@ -1,7 +1,11 @@
 import os
+import time
 
 import httpx
 from fastapi import FastAPI, Request
+from opentelemetry import trace
+
+tracer = trace.get_tracer(__name__)
 
 app = FastAPI()
 
@@ -34,10 +38,12 @@ def dump(request: Request):
     return request.headers
 
 
-# @app.get('/trace')
-# def send_hello():
-#     with tracer.start_as_current_span('foo'):
-#         return 'Hello world!'
+@app.get('/trace')
+def send_hello():
+    with tracer.start_as_current_span('custom span'):
+        time.sleep(2)
+
+    return 'Hello world!'
 
 
 @app.get('/two_pow/{num}')
@@ -49,5 +55,6 @@ def calc_square(num: int):
     return {'result': val}
 
 
+@tracer.start_as_current_span('add_nums')
 def add_nums(a, b):
     return a + b

@@ -15,8 +15,8 @@ dependencies = [
     "opentelemetry-exporter-gcp-trace",
     "opentelemetry-instrumentation-httpx==0.50b0",
     "opentelemetry-instrumentation-fastapi==0.50b0",
-#    "opentelemetry-instrumentation-logging==0.50b0",
-#    "python-json-logger",
+    "google-cloud-logging==3.11.3",
+    "grpcio==1.67.1",
 ]
 description = "TODO"
 readme =  "README.md"

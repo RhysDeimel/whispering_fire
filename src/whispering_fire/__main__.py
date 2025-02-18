@@ -4,6 +4,7 @@
 # If you're pulling in other modules within this folder, don't forget to import
 # them as demonstrated in the unused example below
 
+import google.cloud.logging
 import uvicorn
 from opentelemetry import trace
 from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
@@ -16,6 +17,7 @@ from opentelemetry.sdk.trace.export import (
 
 from whispering_fire.main import app
 
+# Trace config
 provider = TracerProvider()
 trace.set_tracer_provider(provider)
 cloud_trace_exporter = CloudTraceSpanExporter()
@@ -24,5 +26,9 @@ tracer = trace.get_tracer(__name__)
 
 HTTPXClientInstrumentor().instrument()
 FastAPIInstrumentor.instrument_app(app)
+
+# log config
+client = google.cloud.logging.Client()
+client.setup_logging()
 
 uvicorn.run(app, host='0.0.0.0', port=8080)
